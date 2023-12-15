@@ -49,3 +49,5 @@ end
 gem 'rubocop'
 
 gem 'devise_token_auth'
+
+gem 'cancancan'
