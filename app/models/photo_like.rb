@@ -1,0 +1,2 @@
+class PhotoLike < ApplicationRecord
+end

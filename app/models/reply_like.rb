@@ -1,0 +1,2 @@
+class ReplyLike < ApplicationRecord
+end
