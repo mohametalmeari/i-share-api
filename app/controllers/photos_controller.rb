@@ -1,8 +1,12 @@
 class PhotosController < ApplicationController
   before_action :authenticate_user!
+  load_and_authorize_resource
+  rescue_from CanCan::AccessDenied do |_exception|
+    render json: { error: 'Access denied' }
+  end
 
   def index
-    photos = Photo.all.order(created_at: :desc)
+    photos = Photo.where(archive: false).order(created_at: :desc)
     render json: photos, status: :ok
   end
 
