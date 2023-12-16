@@ -1,5 +1,5 @@
 class PhotosController < ApplicationController
-  # before_action :authenticate_user!
+  before_action :authenticate_user!
 
   def index
     photos = Photo.all.order(created_at: :desc)
@@ -9,10 +9,7 @@ class PhotosController < ApplicationController
   def create
     image_url = params[:image_url]
     caption = params[:caption]
-    user = User.find(params[:user_id])
-    photo = Photo.new(image_url:, caption:, user:)
-
-    # photo.user = current_user
+    photo = Photo.new(image_url:, caption:, user: current_user)
     if photo.save
       render json: { messsage: 'saved' }, status: :created
     else
@@ -54,9 +51,9 @@ class PhotosController < ApplicationController
     end
   end
 
-  private
+  # private
 
-  def photo_params
-    params.require(:photo).permit(:image_url, :caption, :archive)
-  end
+  # def photo_params
+  #   params.require(:photo).permit(:image_url, :caption, :archive)
+  # end
 end
