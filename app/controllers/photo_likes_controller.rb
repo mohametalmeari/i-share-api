@@ -1,8 +1,13 @@
 class PhotoLikesController < ApplicationController
   before_action :authenticate_user!
+  load_and_authorize_resource
+  rescue_from CanCan::AccessDenied do |_exception|
+    render json: { error: 'Access denied' }
+  end
 
   def index
-    likes = PhotoLike.where(photo_id: params[:photo_id])&.order(created_at: :desc)
+    photo = Photo.find_by(id: params[:photo_id], archive: false)
+    likes = PhotoLike.where(photo:)&.order(created_at: :desc)
     render json: likes, status: :ok
   end
 

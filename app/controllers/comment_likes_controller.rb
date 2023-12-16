@@ -1,8 +1,13 @@
 class CommentLikesController < ApplicationController
   before_action :authenticate_user!
+  load_and_authorize_resource
+  rescue_from CanCan::AccessDenied do |_exception|
+    render json: { error: 'Access denied' }
+  end
 
   def index
-    comment = Comment.find_by(photo_id: params[:photo_id], id: params[:comment_id])
+    photo = Photo.find_by(id: params[:photo_id], archive: false)
+    comment = Comment.find_by(photo:, id: params[:comment_id])
     likes = CommentLike.where(comment:)&.order(created_at: :desc)
     render json: likes, status: :ok
   end

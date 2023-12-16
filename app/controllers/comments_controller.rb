@@ -6,7 +6,8 @@ class CommentsController < ApplicationController
   end
 
   def index
-    comments = Comment.where(photo_id: params[:photo_id])&.order(created_at: :desc)
+    photo = Photo.find_by(id: params[:photo_id], archive: false)
+    comments = Comment.where(photo:)&.order(created_at: :desc)
     render json: comments, status: :ok
   end
 

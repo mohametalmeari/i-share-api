@@ -6,7 +6,8 @@ class RepliesController < ApplicationController
   end
 
   def index
-    comment = Comment.find_by(photo_id: params[:photo_id], id: params[:comment_id])
+    photo = Photo.find_by(id: params[:photo_id], archive: false)
+    comment = Comment.find_by(photo:, id: params[:comment_id])
     replies = Reply.where(comment:)&.order(created_at: :desc)
     render json: replies, status: :ok
   end
