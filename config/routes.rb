@@ -7,7 +7,11 @@ Rails.application.routes.draw do
       get 'likes', to: 'comment_likes#index'
       post 'like', to: 'comment_likes#create'
       delete 'unlike', to: 'comment_likes#destroy'
-      resources :replies, only: [:index, :create, :show, :destroy]
+      resources :replies, only: [:index, :create, :show, :destroy] do
+        get 'likes', to: 'reply_likes#index'
+        post 'like', to: 'reply_likes#create'
+        delete 'unlike', to: 'reply_likes#destroy'
+      end
     end
   end
   mount_devise_token_auth_for 'User', at: 'auth'
