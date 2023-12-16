@@ -1,4 +1,6 @@
 class ReplyLikesController < ApplicationController
+  before_action :authenticate_user!
+
   def index
     comment = Comment.find_by(photo_id: params[:photo_id], id: params[:comment_id])
     reply = Reply.find_by(comment:, id: params[:reply_id])

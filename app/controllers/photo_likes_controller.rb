@@ -1,4 +1,6 @@
 class PhotoLikesController < ApplicationController
+  before_action :authenticate_user!
+
   def index
     likes = PhotoLike.where(photo_id: params[:photo_id])&.order(created_at: :desc)
     render json: likes, status: :ok

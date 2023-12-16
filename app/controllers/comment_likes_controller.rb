@@ -1,4 +1,6 @@
 class CommentLikesController < ApplicationController
+  before_action :authenticate_user!
+
   def index
     comment = Comment.find_by(photo_id: params[:photo_id], id: params[:comment_id])
     likes = CommentLike.where(comment:)&.order(created_at: :desc)
