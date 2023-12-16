@@ -10,9 +10,75 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2023_12_15_212123) do
+ActiveRecord::Schema[7.0].define(version: 2023_12_15_234701) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
+
+  create_table "comment_likes", force: :cascade do |t|
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.bigint "user_id", null: false
+    t.bigint "comment_id", null: false
+    t.index ["comment_id"], name: "index_comment_likes_on_comment_id"
+    t.index ["user_id"], name: "index_comment_likes_on_user_id"
+  end
+
+  create_table "comments", force: :cascade do |t|
+    t.text "content"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.bigint "user_id", null: false
+    t.bigint "photo_id", null: false
+    t.index ["photo_id"], name: "index_comments_on_photo_id"
+    t.index ["user_id"], name: "index_comments_on_user_id"
+  end
+
+  create_table "photo_likes", force: :cascade do |t|
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.bigint "user_id", null: false
+    t.bigint "photo_id", null: false
+    t.index ["photo_id"], name: "index_photo_likes_on_photo_id"
+    t.index ["user_id"], name: "index_photo_likes_on_user_id"
+  end
+
+  create_table "photos", force: :cascade do |t|
+    t.string "image_url"
+    t.text "caption"
+    t.boolean "archive", default: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.bigint "user_id", null: false
+    t.index ["user_id"], name: "index_photos_on_user_id"
+  end
+
+  create_table "replies", force: :cascade do |t|
+    t.text "content"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.bigint "user_id", null: false
+    t.bigint "comment_id", null: false
+    t.index ["comment_id"], name: "index_replies_on_comment_id"
+    t.index ["user_id"], name: "index_replies_on_user_id"
+  end
+
+  create_table "reply_likes", force: :cascade do |t|
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.bigint "user_id", null: false
+    t.bigint "reply_id", null: false
+    t.index ["reply_id"], name: "index_reply_likes_on_reply_id"
+    t.index ["user_id"], name: "index_reply_likes_on_user_id"
+  end
+
+  create_table "reposts", force: :cascade do |t|
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.bigint "user_id", null: false
+    t.bigint "photo_id", null: false
+    t.index ["photo_id"], name: "index_reposts_on_photo_id"
+    t.index ["user_id"], name: "index_reposts_on_user_id"
+  end
 
   create_table "users", force: :cascade do |t|
     t.string "provider", default: "email", null: false
@@ -39,4 +105,17 @@ ActiveRecord::Schema[7.0].define(version: 2023_12_15_212123) do
     t.index ["uid", "provider"], name: "index_users_on_uid_and_provider", unique: true
   end
 
+  add_foreign_key "comment_likes", "comments"
+  add_foreign_key "comment_likes", "users"
+  add_foreign_key "comments", "photos"
+  add_foreign_key "comments", "users"
+  add_foreign_key "photo_likes", "photos"
+  add_foreign_key "photo_likes", "users"
+  add_foreign_key "photos", "users"
+  add_foreign_key "replies", "comments"
+  add_foreign_key "replies", "users"
+  add_foreign_key "reply_likes", "replies"
+  add_foreign_key "reply_likes", "users"
+  add_foreign_key "reposts", "photos"
+  add_foreign_key "reposts", "users"
 end
