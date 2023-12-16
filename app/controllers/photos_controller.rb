@@ -3,13 +3,11 @@ class PhotosController < ApplicationController
 
   def index
     photos = Photo.all.order(created_at: :desc)
-    render json: photos
+    render json: photos, status: :ok
   end
 
   def create
-    image_url = params[:image_url]
-    caption = params[:caption]
-    photo = Photo.new(image_url:, caption:, user: current_user)
+    photo = Photo.new(image_url: params[:image_url], caption: params[:caption], user: current_user)
     if photo.save
       render json: { messsage: 'saved' }, status: :created
     else
@@ -20,7 +18,7 @@ class PhotosController < ApplicationController
   def show
     photo = Photo.find_by_id(params[:id])
     if photo
-      render json: photo
+      render json: photo, status: :ok
     else
       render json: { error: 'not found' }, status: :not_found
     end
@@ -50,10 +48,4 @@ class PhotosController < ApplicationController
       render json: { error: 'failed to delete' }, status: :unprocessable_entity
     end
   end
-
-  # private
-
-  # def photo_params
-  #   params.require(:photo).permit(:image_url, :caption, :archive)
-  # end
 end
