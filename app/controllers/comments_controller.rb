@@ -1,5 +1,9 @@
 class CommentsController < ApplicationController
   before_action :authenticate_user!
+  load_and_authorize_resource
+  rescue_from CanCan::AccessDenied do |_exception|
+    render json: { error: 'Access denied' }
+  end
 
   def index
     comments = Comment.where(photo_id: params[:photo_id])&.order(created_at: :desc)
