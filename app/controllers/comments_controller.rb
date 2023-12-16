@@ -7,6 +7,7 @@ class CommentsController < ApplicationController
 
   def index
     photo = Photo.find_by(id: params[:photo_id], archive: false)
+    return render json: { error: 'Access denied' } unless photo
     comments = Comment.where(photo:)&.order(created_at: :desc)
     render json: comments, status: :ok
   end
