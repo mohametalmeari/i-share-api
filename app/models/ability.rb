@@ -12,8 +12,9 @@ class Ability
     can %i[read destroy], Comment, photo: { user: }
     can(:destroy, Comment, user:)
 
-
-
+    can :read, Reply, comment: { photo: { archive: false } }
+    can %i[read destroy], Reply, comment: { photo: { user: } }
+    can(:destroy, Reply, user:)
 
     can :manage, :all if user.email == 'admin@email.com'
   end
