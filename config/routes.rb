@@ -4,6 +4,9 @@ Rails.application.routes.draw do
     post 'like', to: 'photo_likes#create'
     delete 'unlike', to: 'photo_likes#destroy'
     resources :comments, only: [:index, :create, :show, :destroy] do
+      get 'likes', to: 'comment_likes#index'
+      post 'like', to: 'comment_likes#create'
+      delete 'unlike', to: 'comment_likes#destroy'
       resources :replies, only: [:index, :create, :show, :destroy]
     end
   end
