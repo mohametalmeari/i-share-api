@@ -7,14 +7,15 @@ class RepliesController < ApplicationController
 
   def index
     photo = Photo.find_by(id: params[:photo_id], archive: false)
-    return render json: { error: 'Access denied' } unless photo
     comment = Comment.find_by(photo:, id: params[:comment_id])
     replies = Reply.where(comment:)&.order(created_at: :desc)
     render json: replies, status: :ok
   end
 
   def create
-    reply = Reply.new(content: params[:content], comment_id: params[:comment_id], user: current_user)
+    photo = Photo.find_by(id: params[:photo_id], archive: false)
+    comment = Comment.find_by(photo:, id: params[:comment_id])
+    reply = Reply.new(content: params[:content], comment:, user: current_user)
     if reply.save
       render json: { messsage: 'saved' }, status: :created
     else
@@ -33,7 +34,8 @@ class RepliesController < ApplicationController
   end
 
   def destroy
-    comment = Comment.find_by(photo_id: params[:photo_id], id: params[:comment_id])
+    photo = Photo.find_by(id: params[:photo_id], archive: false)
+    comment = Comment.find_by(photo:, id: params[:comment_id])
     reply = Reply.find_by(id: params[:id], comment:)
     if reply&.destroy
       render json: { messsage: 'deleted' }, status: :ok

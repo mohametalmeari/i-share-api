@@ -7,14 +7,15 @@ class CommentLikesController < ApplicationController
 
   def index
     photo = Photo.find_by(id: params[:photo_id], archive: false)
-    return render json: { error: 'Access denied' } unless photo
     comment = Comment.find_by(photo:, id: params[:comment_id])
     likes = CommentLike.where(comment:)&.order(created_at: :desc)
     render json: likes, status: :ok
   end
 
   def create
-    like = CommentLike.new(comment_id: params[:comment_id], user: current_user)
+    photo = Photo.find_by(id: params[:photo_id], archive: false)
+    comment = Comment.find_by(photo:, id: params[:comment_id])
+    like = CommentLike.new(comment:, user: current_user)
     if like.save
       render json: { messsage: 'liked' }, status: :created
     else
@@ -23,7 +24,8 @@ class CommentLikesController < ApplicationController
   end
 
   def destroy
-    comment = Comment.find_by(photo_id: params[:photo_id], id: params[:comment_id])
+    photo = Photo.find_by(id: params[:photo_id], archive: false)
+    comment = Comment.find_by(photo:, id: params[:comment_id])
     like = CommentLike.find_by(comment:, user: current_user)
     if like&.destroy
       render json: { messsage: 'unliked' }, status: :ok

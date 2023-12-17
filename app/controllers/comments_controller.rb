@@ -7,13 +7,13 @@ class CommentsController < ApplicationController
 
   def index
     photo = Photo.find_by(id: params[:photo_id], archive: false)
-    return render json: { error: 'Access denied' } unless photo
     comments = Comment.where(photo:)&.order(created_at: :desc)
     render json: comments, status: :ok
   end
 
   def create
-    comment = Comment.new(content: params[:content], photo_id: params[:photo_id], user: current_user)
+    photo = Photo.find_by(id: params[:photo_id], archive: false)
+    comment = Comment.new(content: params[:content], photo:, user: current_user)
     if comment.save
       render json: { messsage: 'saved' }, status: :created
     else
@@ -31,7 +31,8 @@ class CommentsController < ApplicationController
   end
 
   def destroy
-    comment = Comment.find_by(id: params[:id], photo_id: params[:photo_id])
+    photo = Photo.find_by(id: params[:photo_id], archive: false)
+    comment = Comment.find_by(id: params[:id], photo:)
     if comment&.destroy
       render json: { messsage: 'deleted' }, status: :ok
     elsif !comment

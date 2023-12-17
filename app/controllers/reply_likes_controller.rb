@@ -7,7 +7,6 @@ class ReplyLikesController < ApplicationController
 
   def index
     photo = Photo.find_by(id: params[:photo_id], archive: false)
-    return render json: { error: 'Access denied' } unless photo
     comment = Comment.find_by(photo:, id: params[:comment_id])
     reply = Reply.find_by(comment:, id: params[:reply_id])
     likes = ReplyLike.where(reply:)&.order(created_at: :desc)
@@ -15,7 +14,10 @@ class ReplyLikesController < ApplicationController
   end
 
   def create
-    like = ReplyLike.new(reply_id: params[:reply_id], user: current_user)
+    photo = Photo.find_by(id: params[:photo_id], archive: false)
+    comment = Comment.find_by(photo:, id: params[:comment_id])
+    reply = Reply.find_by(comment:, id: params[:reply_id])
+    like = ReplyLike.new(reply:, user: current_user)
     if like.save
       render json: { messsage: 'liked' }, status: :created
     else
@@ -24,7 +26,8 @@ class ReplyLikesController < ApplicationController
   end
 
   def destroy
-    comment = Comment.find_by(photo_id: params[:photo_id], id: params[:comment_id])
+    photo = Photo.find_by(id: params[:photo_id], archive: false)
+    comment = Comment.find_by(photo:, id: params[:comment_id])
     reply = Reply.find_by(comment:, id: params[:reply_id])
     like = ReplyLike.find_by(reply:, user: current_user)
     if like&.destroy
