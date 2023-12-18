@@ -13,7 +13,9 @@ class CommentsController < ApplicationController
 
   def create
     photo = Photo.find_by(id: params[:photo_id], archive: false)
-    comment = Comment.new(content: params[:content], photo:, user: current_user)
+    comment = Comment.new(comment_params)
+    comment.photo = photo
+    comment.user = current_user
     if comment.save
       render json: { messsage: 'saved' }, status: :created
     else
@@ -40,5 +42,11 @@ class CommentsController < ApplicationController
     else
       render json: { error: 'failed to delete' }, status: :unprocessable_entity
     end
+  end
+
+  private
+
+  def comment_params
+    params.require(:comment).permit(:content)
   end
 end
