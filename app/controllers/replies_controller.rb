@@ -15,7 +15,9 @@ class RepliesController < ApplicationController
   def create
     photo = Photo.find_by(id: params[:photo_id], archive: false)
     comment = Comment.find_by(photo:, id: params[:comment_id])
-    reply = Reply.new(content: params[:content], comment:, user: current_user)
+    reply = Reply.new(reply_params)
+    reply.comment = comment
+    reply.user = current_user
     if reply.save
       render json: { messsage: 'saved' }, status: :created
     else
@@ -44,5 +46,11 @@ class RepliesController < ApplicationController
     else
       render json: { error: 'failed to delete' }, status: :unprocessable_entity
     end
+  end
+
+  private
+
+  def reply_params
+    params.permit(:content)
   end
 end

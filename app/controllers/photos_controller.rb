@@ -11,7 +11,8 @@ class PhotosController < ApplicationController
   end
 
   def create
-    photo = Photo.new(image_url: params[:image_url], caption: params[:caption], user: current_user)
+    photo = Photo.new(photo_params)
+    photo.user = current_user
     if photo.save
       render json: { messsage: 'saved' }, status: :created
     else
@@ -51,5 +52,11 @@ class PhotosController < ApplicationController
     else
       render json: { error: 'failed to delete' }, status: :unprocessable_entity
     end
+  end
+
+  private
+
+  def photo_params
+    params.permit(:image_url, :caption)
   end
 end
