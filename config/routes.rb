@@ -1,4 +1,5 @@
 Rails.application.routes.draw do
+  get 'about', to: 'about#index'
   resources :photos, only: [:index, :create, :show, :destroy, :update] do
     get 'likes', to: 'photo_likes#index'
     post 'like', to: 'photo_likes#create'
