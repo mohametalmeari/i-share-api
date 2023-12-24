@@ -15,7 +15,7 @@ class PhotoLikesController < ApplicationController
     photo = Photo.find_by(id: params[:photo_id], archive: false)
     like = PhotoLike.new(photo:, user: current_user)
     if like.save
-      render json: { messsage: 'liked' }, status: :created
+      render json: { liked: true, likes: photo.count_likes }, status: :created
     else
       render json: { error: 'failed to like' }, status: :unprocessable_entity
     end
@@ -25,7 +25,7 @@ class PhotoLikesController < ApplicationController
     photo = Photo.find_by(id: params[:photo_id], archive: false)
     like = PhotoLike.find_by(photo:, user: current_user)
     if like&.destroy
-      render json: { messsage: 'unliked' }, status: :ok
+      render json: { liked: false, likes: photo.count_likes }, status: :ok
     else
       render json: { error: 'failed to unlike' }, status: :unprocessable_entity
     end

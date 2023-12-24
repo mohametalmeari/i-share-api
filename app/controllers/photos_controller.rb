@@ -6,8 +6,25 @@ class PhotosController < ApplicationController
   end
 
   def index
-    photos = Photo.where(archive: false).order(created_at: :desc)
-    render json: photos, status: :ok
+    photos = Photo.where(archive: false).order(created_at: :desc).includes(:user)
+    response = photos.map do |photo|
+      {
+        id: photo.id,
+        image_url: photo.image_url,
+        caption: photo.caption,
+        likes: photo.count_likes,
+        liked: photo.liked?(current_user),
+        comments: photo.count_comments,
+        user: {
+          name: photo.user.name,
+          username: photo.user.username,
+          control: photo.user == current_user || current_user.email == 'admin@email.com',
+          profile_image: photo.user.image_url
+        }
+      }
+    end
+
+    render json: response, status: :ok
   end
 
   def create
@@ -20,10 +37,25 @@ class PhotosController < ApplicationController
     end
   end
 
-  def show
+  def show # rubocop:disable Metrics/MethodLength
     photo = Photo.find_by_id(params[:id])
     if photo
-      render json: photo, status: :ok
+      response = {
+        id: photo.id,
+        image_url: photo.image_url,
+        caption: photo.caption,
+        likes: photo.count_likes,
+        liked: photo.liked?(current_user),
+        archive: photo.archive,
+        comments: photo.count_comments,
+        user: {
+          name: photo.user.name,
+          username: photo.user.username,
+          control: photo.user == current_user || current_user.email == 'admin@email.com',
+          profile_image: photo.user.image_url
+        }
+      }
+      render json: response, status: :ok
     else
       render json: { error: 'not found' }, status: :not_found
     end
@@ -46,7 +78,7 @@ class PhotosController < ApplicationController
   def destroy
     photo = Photo.find_by_id(params[:id])
     if photo&.destroy
-      render json: { messsage: 'deleted' }, status: :ok
+      render json: { message: 'deleted' }, status: :ok
     elsif !photo
       render json: { error: 'not found' }, status: :not_found
     else

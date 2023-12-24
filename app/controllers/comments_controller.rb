@@ -8,7 +8,22 @@ class CommentsController < ApplicationController
   def index
     photo = Photo.find_by(id: params[:photo_id], archive: false)
     comments = Comment.where(photo:)&.order(created_at: :desc)
-    render json: comments, status: :ok
+    response = comments.map do |comment|
+      {
+        id: comment.id,
+        content: comment.content,
+        likes: comment.count_likes,
+        liked: comment.liked?(current_user),
+        replies: comment.count_replies,
+        user: {
+          name: comment.user.name,
+          username: comment.user.username,
+          control: comment.user == current_user || current_user.email == 'admin@email.com'
+        }
+      }
+    end
+
+    render json: response, status: :ok
   end
 
   def create
@@ -36,7 +51,7 @@ class CommentsController < ApplicationController
     photo = Photo.find_by(id: params[:photo_id], archive: false)
     comment = Comment.find_by(id: params[:id], photo:)
     if comment&.destroy
-      render json: { messsage: 'deleted' }, status: :ok
+      render json: { message: 'deleted' }, status: :ok
     elsif !comment
       render json: { error: 'not found' }, status: :not_found
     else
