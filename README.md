@@ -167,7 +167,7 @@ If you like this project, please give it a star ⭐.
 
 ## 🙏 Acknowledgments <a name="acknowledgements"></a>
 
-- [drawSQL](drawsql.app) was used to create the schema diagram.
+- [drawSQL](https://drawsql.app/) was used to create the schema diagram.
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
