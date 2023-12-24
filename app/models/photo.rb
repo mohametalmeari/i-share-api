@@ -4,6 +4,9 @@ class Photo < ApplicationRecord
   has_many :photo_likes, foreign_key: 'photo_id', dependent: :destroy
   has_many :reposts, foreign_key: 'photo_id', dependent: :destroy
 
+  validates :caption, presence: true
+  validates :image_url, presence: true
+
   def count_likes
     PhotoLike.where(photo: self).count
   end

@@ -4,6 +4,8 @@ class Comment < ApplicationRecord
   has_many :replies, foreign_key: 'comment_id', dependent: :destroy
   has_many :comment_likes, foreign_key: 'comment_id', dependent: :destroy
 
+  validates :content, presence: true
+
   def count_likes
     CommentLike.where(comment: self).count
   end
