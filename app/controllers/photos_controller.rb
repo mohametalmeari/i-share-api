@@ -27,6 +27,29 @@ class PhotosController < ApplicationController
     render json: response, status: :ok
   end
 
+  def my_photos
+    photos = Photo.where(user: current_user).order(created_at: :desc).includes(:user)
+    response = photos.map do |photo|
+      {
+        id: photo.id,
+        image_url: photo.image_url,
+        caption: photo.caption,
+        likes: photo.count_likes,
+        liked: photo.liked?(current_user),
+        archive: photo.archive,
+        comments: photo.count_comments,
+        user: {
+          name: photo.user.name,
+          username: photo.user.username,
+          control: photo.user == current_user,
+          profile_image: photo.user.image_url
+        }
+      }
+    end
+
+    render json: response, status: :ok
+  end
+
   def create
     photo = Photo.new(photo_params)
     photo.user = current_user
