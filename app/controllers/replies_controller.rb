@@ -9,7 +9,21 @@ class RepliesController < ApplicationController
     photo = Photo.find_by(id: params[:photo_id], archive: false)
     comment = Comment.find_by(photo:, id: params[:comment_id])
     replies = Reply.where(comment:)&.order(created_at: :desc)
-    render json: replies, status: :ok
+
+    response = replies.map do |reply|
+      {
+        id: reply.id,
+        content: reply.content,
+        likes: reply.count_likes,
+        liked: reply.liked?(current_user),
+        user: {
+          name: reply.user.name,
+          username: reply.user.username,
+          control: reply.user == current_user || current_user.email == 'admin@email.com'
+        }
+      }
+    end
+    render json: response, status: :ok
   end
 
   def create
@@ -40,7 +54,7 @@ class RepliesController < ApplicationController
     comment = Comment.find_by(photo:, id: params[:comment_id])
     reply = Reply.find_by(id: params[:id], comment:)
     if reply&.destroy
-      render json: { messsage: 'deleted' }, status: :ok
+      render json: { message: 'deleted' }, status: :ok
     elsif !reply
       render json: { error: 'not found' }, status: :not_found
     else

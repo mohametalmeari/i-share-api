@@ -19,7 +19,7 @@ class ReplyLikesController < ApplicationController
     reply = Reply.find_by(comment:, id: params[:reply_id])
     like = ReplyLike.new(reply:, user: current_user)
     if like.save
-      render json: { messsage: 'liked' }, status: :created
+      render json: { liked: true, likes: reply.count_likes }, status: :created
     else
       render json: { error: 'failed to like' }, status: :unprocessable_entity
     end
@@ -31,7 +31,7 @@ class ReplyLikesController < ApplicationController
     reply = Reply.find_by(comment:, id: params[:reply_id])
     like = ReplyLike.find_by(reply:, user: current_user)
     if like&.destroy
-      render json: { messsage: 'unliked' }, status: :ok
+      render json: { liked: false, likes: reply.count_likes }, status: :ok
     else
       render json: { error: 'failed to unlike' }, status: :unprocessable_entity
     end

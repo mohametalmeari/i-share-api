@@ -6,7 +6,7 @@ class Ability
     can :create, :all
 
     can :read, Photo, archive: false
-    can(%i[read update destroy], Photo, user:)
+    can(:manage, Photo, user:)
 
     can %i[read], Comment, photo: { archive: false }
     can %i[read destroy], Comment, photo: { user: }
